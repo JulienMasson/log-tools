@@ -31,6 +31,11 @@
   (set-process-filter (get-buffer-process (current-buffer))
 		      (curry 'lt-logcat-filter (current-buffer))))
 
+(defun lt-logcatext-start-process ()
+  (start-file-process "logcatext" (current-buffer) "adb" "shell" "logcatext -b system -b events -b main -b crash -b kernel")
+  (set-process-filter (get-buffer-process (current-buffer))
+		      (curry 'lt-logcat-filter (current-buffer))))
+
 (defun lt-logcat-init ()
   (interactive)
   (setq page-delimiter "--------- beginning of")
@@ -39,8 +44,20 @@
 		   ("  W/.*$"			.	'warning)))
   (lt-logcat-start-process))
 
+(defun lt-logcatext-init ()
+  (interactive)
+  (setq page-delimiter "--------- beginning of")
+  (setq lt-faces '((".*\\(error\\|fail\\).*$"	.	'error)
+		   ("  E/.*$"			.	'error)
+		   ("  W/.*$"			.	'warning)))
+  (lt-logcatext-start-process))
+
 (lt-register-backend (make-lt-backend :name "logcat"
 				      :init 'lt-logcat-init
 				      :restart 'lt-logcat-start-process))
+
+(lt-register-backend (make-lt-backend :name "logcatext"
+				      :init 'lt-logcatext-init
+				      :restart 'lt-logcatext-start-process))
 
 (provide 'lt-logcat)
