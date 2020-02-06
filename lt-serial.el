@@ -92,6 +92,10 @@
       (kill-buffer buf)))
   (setq lt-serial-socat-buffers '()))
 
+(defun lt-serial-stop-process ()
+  (when-let ((process (get-buffer-process (current-buffer))))
+    (delete-process process)))
+
 (defun lt-serial-start-process ()
   (lt-serial-clear-buffer)
   (when (tramp-tramp-file-p lt-serial-port)
@@ -118,6 +122,7 @@
 
 (lt-register-backend (make-lt-backend :name "serial"
 				      :init 'lt-serial-init
+				      :stop 'lt-serial-stop-process
 				      :restart 'lt-serial-start-process))
 
 (add-hook 'kill-buffer-hook 'lt-serial-clear-buffer)

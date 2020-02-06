@@ -240,6 +240,11 @@ length is larger than this value it won't be propertized."
   (let ((backend (find lt-backend lt-backends :key 'lt-backend-name :test 'string=)))
     (funcall (lt-backend-restart backend))))
 
+(defun lt-stop ()
+  (interactive)
+  (let ((backend (find lt-backend lt-backends :key 'lt-backend-name :test 'string=)))
+    (funcall (lt-backend-stop backend))))
+
 (defun lt-quit ()
   (interactive)
   (when (or (get-buffer-process (current-buffer))
@@ -260,6 +265,7 @@ length is larger than this value it won't be propertized."
   (local-set-key (kbd "U") 'lt-unhighlight-all)
   (local-set-key (kbd "u") 'lt-unhighlight)
   (local-set-key (kbd "r") 'lt-restart)
+  (local-set-key (kbd "s") 'lt-stop)
   (local-set-key (kbd "q") 'lt-quit)
   (toggle-read-only t))
 
@@ -276,6 +282,7 @@ length is larger than this value it won't be propertized."
 (defstruct lt-backend
   name
   (init 'ignore)
+  (stop 'ignore)
   (restart 'ignore))
 
 (defun lt-register-backend (backend)
